@@ -30,6 +30,10 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private MemberStatus status = MemberStatus.ACTIVE;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 
@@ -38,11 +42,11 @@ public class Member extends BaseEntity {
 
     protected Member() {}
 
-    public Member(String name, String phone, Gender gender, MemberStatus status, LocalDate birthDate) {
+    public Member(String name, String phone, Gender gender, Role role, LocalDate birthDate) {
         this.name = name;
         this.phone = phone;
         this.gender = gender;
-        this.status = status;
+        this.role = role;
         this.birthDate = birthDate;
     }
 }

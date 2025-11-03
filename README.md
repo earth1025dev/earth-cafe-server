@@ -23,6 +23,7 @@ erDiagram
     varchar gender
     date birth_date
     varchar status "ACTIVE|WITHDRAWN"
+    role VARCHAR(20),
     timestamp withdrawn_at
     timestamp created_on
     timestamp updated_on
