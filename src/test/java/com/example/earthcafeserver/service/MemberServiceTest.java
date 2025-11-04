@@ -77,7 +77,7 @@ class MemberServiceTest {
         memberService.withdrawMember(saved.getId());
 
         // then
-        MemberResponse member = memberService.selectMember(saved.getId());
+        MemberResponse member = memberService.getMember(saved.getId());
         assertEquals(MemberStatus.WITHDRAWN, member.getStatus());
         assertNotNull(member.getWithdrawnAt());
     }
@@ -92,7 +92,7 @@ class MemberServiceTest {
         memberService.cancelWithdrawal(saved.getId());
 
         //then
-        MemberResponse memberResponse = memberService.selectMember(saved.getId());
+        MemberResponse memberResponse = memberService.getMember(saved.getId());
         assertEquals(MemberStatus.ACTIVE, memberResponse.getStatus());
         assertNull(memberResponse.getWithdrawnAt());
     }

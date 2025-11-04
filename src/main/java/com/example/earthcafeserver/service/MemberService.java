@@ -23,7 +23,7 @@ public class MemberService {
     @Autowired
     MemberRepository memberRepository;
 
-    public MemberResponse selectMember(Long memberId) {
+    public MemberResponse getMember(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("해당 회원을 찾을 수 없습니다."));
 
         return toResponse(member);
