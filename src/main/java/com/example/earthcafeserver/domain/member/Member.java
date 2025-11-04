@@ -37,8 +37,8 @@ public class Member extends BaseEntity {
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 
-    @Column(nullable = false)
-    private LocalDateTime withdrawn_at;
+    @Column(nullable = true)
+    private LocalDateTime withdrawnAt;
 
     protected Member() {}
 

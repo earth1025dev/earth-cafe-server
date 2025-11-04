@@ -18,6 +18,13 @@ public class MemberRepository {
     @PersistenceContext
     private EntityManager em;
 
+    public Optional<Member> findById(Long memberId) {
+        return em.createQuery("select m from Member m where m.id = :id", Member.class)
+                .setParameter("id", memberId)
+                .getResultStream()
+                .findFirst();
+    }
+
     public Optional<Member> findByPhone(String phone) {
         return em.createQuery("select m from Member m where m.phone = :phone", Member.class)
                 .setParameter("phone", phone)
@@ -43,12 +50,12 @@ public class MemberRepository {
                 .setParameter("role", role).getResultList();
     }
 
-    public List<Member> findByStatusAndWithdrawnAtAfter(MemberStatus status, LocalDateTime after) {
-        LocalDateTime after30Days = after.plusDays(30);
-
-        return em.createQuery("select m from Member m where m.status = :status and m.withdrawnAt > :after30Days", Member.class)
+    public Optional<Member> findByStatusAndWithdrawnAtAfter(Long memberId, MemberStatus status, LocalDateTime after) {
+        return em.createQuery("select m from Member m where m.id = :id and m.status = :status and m.withdrawnAt > :after", Member.class)
+                .setParameter("id", memberId)
                 .setParameter("status", status)
-                .setParameter("after30Days", after30Days).getResultList();
+                .setParameter("after", after)
+                .getResultStream().findFirst();
     }
 
     public long countByStatus(MemberStatus status) {
@@ -58,14 +65,11 @@ public class MemberRepository {
     }
 
     @Transactional
-    public int updateStatusAndWithdrawnAt(Long memberId,
-                                          MemberStatus status,
-                                          LocalDateTime withdrawnAt) {
+    public int deleteMembersWithdrawnBefore(LocalDateTime threshold) {
         return em.createQuery(
-                        "update Member m set m.status = :status, m.withdrawnAt = :withdrawnAt where m.id = :id")
-                .setParameter("status", status)
-                .setParameter("withdrawnAt", withdrawnAt)
-                .setParameter("id", memberId)
+                        "delete from Member m where m.status = :status and m.withdrawnAt < :threshold")
+                .setParameter("status", MemberStatus.WITHDRAWN)
+                .setParameter("threshold", threshold)
                 .executeUpdate();
     }
 
