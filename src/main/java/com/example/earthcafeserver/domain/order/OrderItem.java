@@ -35,11 +35,15 @@ public class OrderItem {
     protected OrderItem() {
     }
 
-    public OrderItem(Order order, Product product, int quantity, Long unitPrice, Long lineAmount) {
+    public OrderItem(Order order, Product product, int quantity, Long unitPrice) {
         this.order = order;
         this.product = product;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
-        this.lineAmount = lineAmount;
+        calculateLineAmount();
+    }
+
+    public void calculateLineAmount() {
+        this.lineAmount = this.quantity * this.unitPrice;
     }
 }
