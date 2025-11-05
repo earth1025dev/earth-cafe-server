@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Setter
 @Getter
@@ -32,6 +35,9 @@ public class OrderItem {
     @Column(name = "line_amount", nullable = false)
     private Long lineAmount;
 
+    @OneToMany(mappedBy = "orderItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItemOption> options = new ArrayList<>();
+
     protected OrderItem() {
     }
 
@@ -45,5 +51,12 @@ public class OrderItem {
 
     public void calculateLineAmount() {
         this.lineAmount = this.quantity * this.unitPrice;
+        long extra = options.stream().mapToLong(OrderItemOption::getExtraPrice).sum();
+        this.lineAmount += extra;
+    }
+
+    public void addOption(OrderItemOption option) {
+        this.options.add(option);
+        option.setOrderItem(this);
     }
 }
