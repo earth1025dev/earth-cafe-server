@@ -125,7 +125,7 @@ class MemberControllerTest {
                         .content(mapper.writeValueAsString(update)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("성춘향"))
-                .andExpect(jsonPath("$.gender").value("FEMALE"));;
+                .andExpect(jsonPath("$.gender").value("FEMALE"));
     }
 
     @Test

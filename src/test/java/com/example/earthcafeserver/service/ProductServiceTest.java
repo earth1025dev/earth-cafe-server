@@ -28,6 +28,7 @@ class ProductServiceTest {
         options.add(new ProductOptionRequest("ICE", 0L));
         options.add(new ProductOptionRequest("HOT", 0L));
         options.add(new ProductOptionRequest("샷 추가", 500L));
+        productRequest.setOptions(options);
 
         return productRequest;
     }
