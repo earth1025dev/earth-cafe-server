@@ -79,8 +79,7 @@ erDiagram
     varchar status "REQUESTED|SUCCESS|FAIL|REFUND_REQUESTED|REFUNDED|REFUND_FAIL"
     bigint amount
     varchar idempotency_key "UNIQUE"
-    varchar approval_number
-    varchar refund_number
+    varchar fail_code
     varchar fail_reason
     timestamp requested_at
     timestamp completed_at
