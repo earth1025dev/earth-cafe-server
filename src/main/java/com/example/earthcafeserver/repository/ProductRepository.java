@@ -6,6 +6,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -24,6 +25,12 @@ public class ProductRepository {
         return em.createQuery("select p from Product p where p.name = :name", Product.class)
                 .setParameter("name", name)
                 .getResultStream().findFirst();
+    }
+
+    public List<Product> findActiveProducts(Boolean isActive) {
+        return em.createQuery("select p from Product where p.isActive = :isActive", Product.class)
+                .setParameter("isActive", isActive)
+                .getResultList();
     }
 
     @Transactional
