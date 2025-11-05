@@ -28,7 +28,7 @@ public class ProductRepository {
     }
 
     public List<Product> findActiveProducts(Boolean isActive) {
-        return em.createQuery("select p from Product where p.isActive = :isActive", Product.class)
+        return em.createQuery("select p from Product p where p.isActive = :isActive", Product.class)
                 .setParameter("isActive", isActive)
                 .getResultList();
     }
