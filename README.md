@@ -11,8 +11,9 @@ Spring Boot + JPA + H2 기반의 REST API 구현
 erDiagram
   MEMBER ||--o{ ORDER : places
   ORDER ||--o{ ORDER_ITEM : contains
+  ORDER_ITEM ||--o{ ORDER_ITEM_OPTION : has
+  ORDER_ITEM_OPTION }o--|| PRODUCT_OPTION : refers
   ORDER ||--|| PAYMENT : has
-  PRODUCT ||--o{ ORDER_ITEM : appears_in
   PRODUCT ||--o{ PRODUCT_OPTION : has
   ORDER ||--o{ ORDER_HISTORY : logs
 
@@ -63,6 +64,13 @@ erDiagram
     int quantity
     bigint unit_price
     bigint line_amount
+  }
+
+  ORDER_ITEM_OPTION {
+    bigint id PK
+    bigint order_item_id FK "-> ORDER_ITEM.id"
+    bigint product_option_id FK "-> PRODUCT_OPTION.id"
+    bigint extra_price
   }
 
   PAYMENT {
