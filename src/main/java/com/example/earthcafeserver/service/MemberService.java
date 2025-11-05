@@ -20,8 +20,7 @@ import java.time.LocalDateTime;
 @Transactional
 public class MemberService {
 
-    @Autowired
-    MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     public MemberResponse getMember(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("해당 회원을 찾을 수 없습니다."));
