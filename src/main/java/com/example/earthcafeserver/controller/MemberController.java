@@ -64,7 +64,12 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{id}/cancal-withdrawal")
+    /**
+     * 회원 탈퇴 철회
+     * @param id
+     * @return
+     */
+    @PostMapping("/{id}/cancel-withdrawal")
     public ResponseEntity<?> cancelWithdrawal(@PathVariable Long id) {
         memberService.cancelWithdrawal(id);
         return ResponseEntity.ok().build();

@@ -21,14 +21,16 @@ public class MemberRepository {
     public Optional<Member> findById(Long memberId) {
         return em.createQuery("select m from Member m where m.id = :id", Member.class)
                 .setParameter("id", memberId)
-                .getResultStream()
+                .getResultList()
+                .stream()
                 .findFirst();
     }
 
     public Optional<Member> findByPhone(String phone) {
         return em.createQuery("select m from Member m where m.phone = :phone", Member.class)
                 .setParameter("phone", phone)
-                .getResultStream()
+                .getResultList()
+                .stream()
                 .findFirst();
     }
 
@@ -75,8 +77,12 @@ public class MemberRepository {
 
     @Transactional
     public Member save(Member member) {
-        em.persist(member);
-        return member;
+        if (member.getId() == null) {
+            em.persist(member);
+            return member;
+        } else {
+            return em.merge(member);
+        }
     }
 
     @Transactional
