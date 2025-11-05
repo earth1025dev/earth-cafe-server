@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class Payment extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "order_id", foreignKey = @ForeignKey(name = "fk_payment_order"))
+    @JoinColumn(name = "order_id", unique = true, foreignKey = @ForeignKey(name = "fk_payment_order"))
     private Order order;
 
     @Enumerated(EnumType.STRING)
@@ -28,14 +28,11 @@ public class Payment extends BaseEntity {
     @Column(nullable = false)
     private Long amount;
 
-    @Column(name = "idempotency_key", nullable = false)
+    @Column(name = "idempotency_key", unique = true)
     private String idempotencyKey;
 
-    @Column(name = "approval_number", nullable = false)
-    private String approvalNumber;
-
-    @Column(name = "refund_number", length = 100)
-    private String refundNumber;
+    @Column(name = "fail_code")
+    private String failCode;
 
     @Column(name = "fail_reason", length = 255)
     private String failReason;
@@ -49,9 +46,10 @@ public class Payment extends BaseEntity {
     protected Payment() {
     }
 
-    public Payment(Order order, Long amount, String idempotencyKey) {
+    public Payment(Order order, Long amount, PaymentStatus paymentStatus, String idempotencyKey) {
         this.order = order;
         this.amount = amount;
+        this.paymentStatus = paymentStatus;
         this.idempotencyKey = idempotencyKey;
     }
 }
