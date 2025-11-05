@@ -5,7 +5,6 @@ import com.example.earthcafeserver.dto.product.ProductRequest;
 import com.example.earthcafeserver.dto.product.ProductSummaryResponse;
 import com.example.earthcafeserver.dto.product.ProductUpdateRequest;
 import com.example.earthcafeserver.service.ProductService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +25,7 @@ public class ProductController {
      * @return
      */
     @PostMapping
-    public ResponseEntity<?> addProduct(@Valid @RequestBody ProductRequest request) {
+    public ResponseEntity<?> addProduct(@RequestBody ProductRequest request) {
         ProductSummaryResponse response = productService.insertProduct(request);
         return ResponseEntity.ok(response);
     }
