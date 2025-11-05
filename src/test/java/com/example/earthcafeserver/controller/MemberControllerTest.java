@@ -2,8 +2,8 @@ package com.example.earthcafeserver.controller;
 
 import com.example.earthcafeserver.domain.member.Member;
 import com.example.earthcafeserver.domain.member.MemberStatus;
-import com.example.earthcafeserver.dto.MemberRequest;
-import com.example.earthcafeserver.dto.MemberUpdateRequest;
+import com.example.earthcafeserver.dto.member.MemberRequest;
+import com.example.earthcafeserver.dto.member.MemberUpdateRequest;
 import com.example.earthcafeserver.repository.MemberRepository;
 import com.example.earthcafeserver.service.MemberService;
 import org.junit.jupiter.api.DisplayName;

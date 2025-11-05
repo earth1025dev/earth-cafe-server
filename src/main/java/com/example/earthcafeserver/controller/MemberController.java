@@ -1,8 +1,8 @@
 package com.example.earthcafeserver.controller;
 
-import com.example.earthcafeserver.dto.MemberRequest;
-import com.example.earthcafeserver.dto.MemberResponse;
-import com.example.earthcafeserver.dto.MemberUpdateRequest;
+import com.example.earthcafeserver.dto.member.MemberRequest;
+import com.example.earthcafeserver.dto.member.MemberResponse;
+import com.example.earthcafeserver.dto.member.MemberUpdateRequest;
 import com.example.earthcafeserver.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

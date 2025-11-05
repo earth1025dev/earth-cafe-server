@@ -1,4 +1,4 @@
-package com.example.earthcafeserver.dto;
+package com.example.earthcafeserver.dto.member;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

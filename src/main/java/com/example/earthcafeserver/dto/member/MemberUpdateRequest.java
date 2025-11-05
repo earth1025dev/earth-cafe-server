@@ -1,4 +1,4 @@
-package com.example.earthcafeserver.dto;
+package com.example.earthcafeserver.dto.member;
 
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;

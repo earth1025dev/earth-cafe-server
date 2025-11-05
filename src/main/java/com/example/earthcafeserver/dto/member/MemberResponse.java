@@ -1,4 +1,4 @@
-package com.example.earthcafeserver.dto;
+package com.example.earthcafeserver.dto.member;
 
 import com.example.earthcafeserver.domain.member.Gender;
 import com.example.earthcafeserver.domain.member.MemberStatus;
