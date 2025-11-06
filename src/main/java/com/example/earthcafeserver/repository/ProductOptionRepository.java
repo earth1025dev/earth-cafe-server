@@ -16,13 +16,13 @@ public class ProductOptionRepository {
     private EntityManager em;
 
     public List<ProductOption> findByProductId(Long productId) {
-        return em.createQuery("select o from ProductOption where o.product.id = :productId", ProductOption.class)
+        return em.createQuery("select o from ProductOption o where o.product.id = :productId", ProductOption.class)
                 .setParameter("productId", productId)
                 .getResultList();
     }
 
     public Optional<ProductOption> findByProductIdAndProductOptionId(Long productId, Long productOptionId) {
-        return em.createQuery("select o from ProductOption where o.product.id = :productId and o.id = :productOptionId", ProductOption.class)
+        return em.createQuery("select o from ProductOption o where o.product.id = :productId and o.id = :productOptionId", ProductOption.class)
                 .setParameter("productId", productId)
                 .setParameter("productOptionId", productOptionId)
                 .getResultList().stream().findFirst();
