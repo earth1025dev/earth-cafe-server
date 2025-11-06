@@ -46,10 +46,9 @@ public class Payment extends BaseEntity {
     protected Payment() {
     }
 
-    public Payment(Order order, Long amount, PaymentStatus paymentStatus, String idempotencyKey) {
+    public Payment(Order order, Long amount, String idempotencyKey) {
         this.order = order;
         this.amount = amount;
-        this.paymentStatus = paymentStatus;
         this.idempotencyKey = idempotencyKey;
     }
 }

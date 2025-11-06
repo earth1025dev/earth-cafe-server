@@ -3,6 +3,7 @@ package com.example.earthcafeserver.service;
 import com.example.earthcafeserver.domain.order.Order;
 import com.example.earthcafeserver.domain.payment.Payment;
 import com.example.earthcafeserver.domain.payment.PaymentStatus;
+import com.example.earthcafeserver.dto.payment.MockPaymentResult;
 import com.example.earthcafeserver.dto.payment.PaymentRequest;
 import com.example.earthcafeserver.dto.payment.PaymentResponse;
 import com.example.earthcafeserver.repository.OrderRepository;
@@ -11,7 +12,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Random;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,23 +24,43 @@ public class PaymentService {
 
     private final OrderRepository orderRepository;
 
+    private final PaymentMockClient paymentMockClient;
+
     public PaymentResponse requestPayment(PaymentRequest request) {
+
+        // 1) 멱등성 키로 먼저 조회, 같은 키로 처리 여부 확인
+        if (request.getIdempotencyKey() != null) {
+            Optional<Payment> existed = paymentRepository.findByIdempotencyKey(request.getIdempotencyKey());
+
+            // 같은 키로 처리했을 시 해당 결제 내용으로 전달
+            if (existed.isPresent()) {
+                return PaymentResponse.from(existed.get(), true);
+            }
+        }
+
+        // 2) 주문 조회
         Long orderId = request.getOrderId();
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
 
-        String result;
-        try {
-            result = makePayment();
-        } catch (Exception e) {
-            Payment fail = paymentRepository.save(new Payment(order, request.getAmount(), PaymentStatus.FAIL, ""));
-            fail.setFailCode("NETWORK_ERROR");
-            fail.setFailCode("네트워크 오류로 실패");
+        // 3) 모킹 결제 호출
+        MockPaymentResult result = paymentMockClient.paymentResult();
 
-            return PaymentResponse.from(fail, true);
+        // 4) 결과 Payment 엔티티에 기록
+        Payment payment = new Payment(order, order.getTotalAmount(), request.getIdempotencyKey());
+        payment.setRequestedAt(LocalDateTime.now());
+
+        if (result.isSuccess()) {
+            payment.setPaymentStatus(PaymentStatus.SUCCESS);
+            payment.setCompletedAt(LocalDateTime.now());
+        } else {
+            payment.setPaymentStatus(PaymentStatus.FAIL);
+            payment.setFailCode(result.getFailCode());
+            payment.setFailReason(result.getFailMessage());
         }
+        paymentRepository.save(payment);
 
-        Payment success = paymentRepository.save(new Payment(order, request.getAmount(), PaymentStatus.SUCCESS, ""));
-        return PaymentResponse.from(success, true);
+        // 5) 응답 전달
+        return PaymentResponse.from(payment, false);
     }
 
     public PaymentResponse getPaymentByOrderId(PaymentRequest request) {
@@ -57,16 +79,5 @@ public class PaymentService {
         payment.setPaymentStatus(PaymentStatus.CANCELED);
 
         return PaymentResponse.from(payment, true);
-    }
-
-    private String makePayment() throws Exception {
-        Thread.sleep((long) (Math.random() * 1000));
-
-        Random random = new Random();
-        if (random.nextInt() % 100 == 1) {
-            throw new Exception("Failed!");
-        }
-
-        return "Success";
     }
 }
