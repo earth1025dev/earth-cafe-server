@@ -4,10 +4,7 @@ import com.example.earthcafeserver.domain.member.Member;
 import com.example.earthcafeserver.domain.order.*;
 import com.example.earthcafeserver.domain.product.Product;
 import com.example.earthcafeserver.domain.product.ProductOption;
-import com.example.earthcafeserver.dto.order.OrderItemRequest;
-import com.example.earthcafeserver.dto.order.OrderRequest;
-import com.example.earthcafeserver.dto.order.OrderResponse;
-import com.example.earthcafeserver.dto.order.OrderSummaryResponse;
+import com.example.earthcafeserver.dto.order.*;
 import com.example.earthcafeserver.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -112,5 +109,15 @@ public class OrderService {
         List<Order> members = orderRepository.findByMemberId(memberId);
 
         return members.stream().map(OrderSummaryResponse::from).toList();
+    }
+
+    public List<OrderHistoryResponse> getOrderHistory(Long orderId) {
+        List<OrderHistory> historyList = orderHistoryRepository.findByOrderId(orderId);
+        return historyList.stream().map(OrderHistoryResponse::from).toList();
+    }
+
+    public List<OrderItemResponse> getOrderItems(Long orderId) {
+        List<OrderItem> items = orderItemRepository.findByOrderId(orderId);
+        return items.stream().map(OrderItemResponse::from).toList();
     }
 }

@@ -78,9 +78,13 @@ public class PaymentService {
         return PaymentResponse.from(payment, false);
     }
 
-    public PaymentResponse getPaymentByOrderId(PaymentRequest request) {
-        Payment payment = paymentRepository.findByOrderId(request.getOrderId()).orElseThrow(() -> new IllegalArgumentException("결제 내역이 없습니다."));
+    public PaymentResponse getPaymentByOrderId(Long orderId) {
+        Payment payment = paymentRepository.findByOrderId(orderId).orElseThrow(() -> new IllegalArgumentException("결제 내역이 없습니다."));
+        return PaymentResponse.from(payment, true);
+    }
 
+    public PaymentResponse getPaymentByOrderIdAndPaymentId(Long orderId, Long paymentId) {
+        Payment payment = paymentRepository.findByOrderIdAndPaymentId(orderId, paymentId).orElseThrow(() -> new IllegalArgumentException("결제 내역이 없습니다."));
         return PaymentResponse.from(payment, true);
     }
 

@@ -28,6 +28,13 @@ public class PaymentRepository {
                 .getResultStream().findFirst();
     }
 
+    public Optional<Payment> findByOrderIdAndPaymentId(Long orderId, Long paymentId) {
+        return em.createQuery("select p from Payment p where p.order.id = :orderId and p.id = :paymentId", Payment.class)
+                .setParameter("orderId", orderId)
+                .setParameter("paymentId", paymentId)
+                .getResultStream().findFirst();
+    }
+
     @Transactional
     public int updateStatus(Long paymentId, PaymentStatus status, LocalDateTime completedAt, String failReason) {
         return em.createQuery("update Payment p set p.status = :status, p.completedAt = :completedAt, p.failReason = :failReason where p.id = :id")
