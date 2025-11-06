@@ -58,5 +58,6 @@ public class OrderItem {
     public void addOption(OrderItemOption option) {
         this.options.add(option);
         option.setOrderItem(this);
+        this.lineAmount += option.getExtraPrice();
     }
 }

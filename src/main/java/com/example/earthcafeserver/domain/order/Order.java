@@ -32,14 +32,11 @@ public class Order extends BaseEntity {
 
     public Order(Member member) {
         this.member = member;
+        this.status = OrderStatus.CREATED;
     }
 
     public void setMember(Member member) {
         this.member = member;
-    }
-
-    public void setStatus(OrderStatus status) {
-        this.status = status;
     }
 
     public void addItem(OrderItem item) {
@@ -49,5 +46,9 @@ public class Order extends BaseEntity {
     }
     public void recalcTotal() {
         this.totalAmount = items.stream().mapToLong(OrderItem::getLineAmount).sum();
+    }
+
+    public void changeStatus(OrderStatus status) {
+        this.status = status;
     }
 }

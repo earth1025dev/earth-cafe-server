@@ -1,11 +1,14 @@
 package com.example.earthcafeserver.service;
 
 import com.example.earthcafeserver.domain.order.Order;
+import com.example.earthcafeserver.domain.order.OrderHistory;
+import com.example.earthcafeserver.domain.order.OrderStatus;
 import com.example.earthcafeserver.domain.payment.Payment;
 import com.example.earthcafeserver.domain.payment.PaymentStatus;
 import com.example.earthcafeserver.dto.payment.MockPaymentResult;
 import com.example.earthcafeserver.dto.payment.PaymentRequest;
 import com.example.earthcafeserver.dto.payment.PaymentResponse;
+import com.example.earthcafeserver.repository.OrderHistoryRepository;
 import com.example.earthcafeserver.repository.OrderRepository;
 import com.example.earthcafeserver.repository.PaymentRepository;
 import jakarta.transaction.Transactional;
@@ -23,6 +26,8 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
 
     private final OrderRepository orderRepository;
+
+    private final OrderHistoryRepository orderHistoryRepository;
 
     private final PaymentMockClient paymentMockClient;
 
@@ -52,10 +57,20 @@ public class PaymentService {
         if (result.isSuccess()) {
             payment.setPaymentStatus(PaymentStatus.SUCCESS);
             payment.setCompletedAt(LocalDateTime.now());
+
+            orderHistoryRepository.save(
+                    new OrderHistory(order, order.getStatus(), OrderStatus.CONFIRMED, "SYSTEM")
+            );
+            order.changeStatus(OrderStatus.CONFIRMED);
         } else {
             payment.setPaymentStatus(PaymentStatus.FAIL);
             payment.setFailCode(result.getFailCode());
             payment.setFailReason(result.getFailMessage());
+
+            orderHistoryRepository.save(
+                    new OrderHistory(order, order.getStatus(), OrderStatus.FAILED_PAYMENT, "SYSTEM")
+            );
+            order.changeStatus(OrderStatus.FAILED_PAYMENT);
         }
         paymentRepository.save(payment);
 

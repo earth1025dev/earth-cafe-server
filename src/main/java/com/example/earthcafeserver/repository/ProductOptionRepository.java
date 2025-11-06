@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ProductOptionRepository {
@@ -18,6 +19,13 @@ public class ProductOptionRepository {
         return em.createQuery("select o from ProductOption where o.product.id = :productId", ProductOption.class)
                 .setParameter("productId", productId)
                 .getResultList();
+    }
+
+    public Optional<ProductOption> findByProductIdAndProductOptionId(Long productId, Long productOptionId) {
+        return em.createQuery("select o from ProductOption where o.product.id = :productId and o.id = :productOptionId", ProductOption.class)
+                .setParameter("productId", productId)
+                .setParameter("productOptionId", productOptionId)
+                .getResultList().stream().findFirst();
     }
 
     @Transactional
