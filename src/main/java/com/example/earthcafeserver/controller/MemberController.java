@@ -4,6 +4,7 @@ import com.example.earthcafeserver.dto.member.MemberRequest;
 import com.example.earthcafeserver.dto.member.MemberResponse;
 import com.example.earthcafeserver.dto.member.MemberUpdateRequest;
 import com.example.earthcafeserver.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ public class MemberController {
      * @param request
      * @return
      */
+    @Operation(summary = "회원가입", description = "회원가입합니다.")
     @PostMapping
     public ResponseEntity<?> createMember(@Valid @RequestBody MemberRequest request) {
         MemberResponse memberResponse = memberService.insertMember(request);
@@ -35,6 +37,7 @@ public class MemberController {
      * @param request
      * @return
      */
+    @Operation(summary = "회원수정", description = "회원 정보를 수정합니다.")
     @PostMapping("/{id}")
     public ResponseEntity<?> updateMember(@PathVariable Long id, @Valid @RequestBody MemberUpdateRequest request) {
         MemberResponse memberResponse = memberService.updateMember(id, request);
@@ -47,6 +50,7 @@ public class MemberController {
      * @param id
      * @return
      */
+    @Operation(summary = "회원 단건 조회", description = "회원을 단건 조회합니다.")
     @GetMapping("/{id}")
     public ResponseEntity<?> getMember(@PathVariable Long id) {
         MemberResponse member = memberService.getMember(id);
@@ -58,6 +62,7 @@ public class MemberController {
      * @param id
      * @return
      */
+    @Operation(summary = "회원 탈퇴", description = "회원을 탈퇴합니다.")
     @PostMapping("/{id}/withdraw")
     public ResponseEntity<?> withdraw(@PathVariable Long id) {
         memberService.withdrawMember(id);
@@ -69,6 +74,7 @@ public class MemberController {
      * @param id
      * @return
      */
+    @Operation(summary = "회원 탈퇴 철회", description = "회원 탈퇴를 철회합니다.")
     @PostMapping("/{id}/cancel-withdrawal")
     public ResponseEntity<?> cancelWithdrawal(@PathVariable Long id) {
         memberService.cancelWithdrawal(id);

@@ -1,12 +1,16 @@
 package com.example.earthcafeserver.domain.member;
 
 import com.example.earthcafeserver.domain.common.BaseEntity;
+import com.example.earthcafeserver.domain.order.Order;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
@@ -39,6 +43,10 @@ public class Member extends BaseEntity {
 
     @Column(name = "withdrawn_at", nullable = true)
     private LocalDateTime withdrawnAt;
+
+    @OneToMany(mappedBy = "member")
+    @JsonIgnore
+    private List<Order> orders = new ArrayList<>();
 
     protected Member() {}
 
