@@ -81,7 +81,7 @@ class PaymentServiceTest {
         assertNotNull(response);
         assertEquals(order.getId(), response.getOrderId());
         assertTrue(response.isSuccess());
-        assertEquals("SUCCESS", response.getStatus());
+        assertEquals("SUCCESS", response.getOrderStatus());
         assertNotNull(response.getPaymentId());
 
         Payment payment = paymentRepository.findByOrderId(response.getPaymentId()).orElseThrow();
@@ -173,7 +173,7 @@ class PaymentServiceTest {
 
         // when
         assertNotNull(response2);
-        assertEquals("CANCELED", response2.getStatus());
+        assertEquals("CANCELED", response2.getOrderStatus());
     }
 
     @Test

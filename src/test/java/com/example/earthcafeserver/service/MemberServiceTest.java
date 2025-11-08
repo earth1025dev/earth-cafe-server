@@ -49,7 +49,7 @@ class MemberServiceTest {
         assertNotNull(member.getId());
         assertEquals("홍길동", member.getName());
         assertEquals("010-****-5678", member.getPhone());
-        assertEquals(MemberStatus.ACTIVE, member.getStatus());
+        assertEquals(MemberStatus.ACTIVE, member.getMemberStatus());
     }
 
     @Test
@@ -78,7 +78,7 @@ class MemberServiceTest {
 
         // then
         MemberResponse member = memberService.getMember(saved.getId());
-        assertEquals(MemberStatus.WITHDRAWN, member.getStatus());
+        assertEquals(MemberStatus.WITHDRAWN, member.getMemberStatus());
         assertNotNull(member.getWithdrawnAt());
     }
 
@@ -93,7 +93,7 @@ class MemberServiceTest {
 
         //then
         MemberResponse memberResponse = memberService.getMember(saved.getId());
-        assertEquals(MemberStatus.ACTIVE, memberResponse.getStatus());
+        assertEquals(MemberStatus.ACTIVE, memberResponse.getMemberStatus());
         assertNull(memberResponse.getWithdrawnAt());
     }
 

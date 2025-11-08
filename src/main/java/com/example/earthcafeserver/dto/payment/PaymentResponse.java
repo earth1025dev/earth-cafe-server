@@ -15,7 +15,7 @@ public class PaymentResponse {
 
     private boolean success;
 
-    private String status;
+    private String orderStatus;
 
     private String failCode;
 
@@ -32,7 +32,7 @@ public class PaymentResponse {
     public static PaymentResponse from(Payment payment, boolean idempotentCheck) {
         return PaymentResponse.builder()
                 .success(payment.getPaymentStatus() == PaymentStatus.SUCCESS)
-                .status(payment.getPaymentStatus().name())
+                .orderStatus(payment.getPaymentStatus().name())
                 .failCode(payment.getFailCode())
                 .failMessage(payment.getFailReason())
                 .paymentId(payment.getId())

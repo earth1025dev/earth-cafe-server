@@ -19,7 +19,7 @@ public class MemberResponse {
     private Gender gender;
     private Role role;
     private LocalDate birthDate;
-    private MemberStatus status;
+    private MemberStatus memberStatus;
     private LocalDateTime withdrawnAt;
 
 }
