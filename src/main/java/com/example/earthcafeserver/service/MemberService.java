@@ -72,6 +72,7 @@ public class MemberService {
         return toResponse(member);
     }
 
+    @Transactional
     public void withdrawMember(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("해당 회원을 찾을 수 없습니다."));
 

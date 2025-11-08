@@ -7,6 +7,7 @@ import com.example.earthcafeserver.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,7 @@ public class MemberController {
     @PostMapping
     public ResponseEntity<?> createMember(@Valid @RequestBody MemberRequest request) {
         MemberResponse memberResponse = memberService.insertMember(request);
-        return ResponseEntity.ok(memberResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(memberResponse);
     }
 
     /**
@@ -66,7 +67,7 @@ public class MemberController {
     @PostMapping("/{id}/withdraw")
     public ResponseEntity<?> withdraw(@PathVariable Long id) {
         memberService.withdrawMember(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -78,6 +79,6 @@ public class MemberController {
     @PostMapping("/{id}/cancel-withdrawal")
     public ResponseEntity<?> cancelWithdrawal(@PathVariable Long id) {
         memberService.cancelWithdrawal(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

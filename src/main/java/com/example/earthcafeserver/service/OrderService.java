@@ -92,6 +92,7 @@ public class OrderService {
         return OrderResponse.from(order);
     }
 
+    @Transactional
     public void cancelOrder(Long orderId, String changedBy) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
 

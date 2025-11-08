@@ -28,6 +28,7 @@ public class ProductDetailResponse {
                 .id(product.getId())
                 .name(product.getName())
                 .price(product.getPrice())
+                .isActive(product.getIsActive())
                 .options(product.getOptions() == null ? null :
                         product.getOptions().stream()
                                 .map(ProductOptionResponse::from)

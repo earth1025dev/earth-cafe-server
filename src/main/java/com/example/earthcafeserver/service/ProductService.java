@@ -48,20 +48,16 @@ public class ProductService {
         return ProductSummaryResponse.from(product);
     }
 
-    public ProductSummaryResponse deactivateProduct(Long productId) {
+    @Transactional
+    public void deactivateProduct(Long productId) {
         Product product = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
-
         product.setIsActive(false);
-
-        return ProductSummaryResponse.from(product);
     }
 
-    public ProductSummaryResponse activeProduct(Long productId) {
+    @Transactional
+    public void activeProduct(Long productId) {
         Product product = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
-
         product.setIsActive(true);
-
-        return ProductSummaryResponse.from(product);
     }
 
     public ProductDetailResponse getProductById(Long productId) {

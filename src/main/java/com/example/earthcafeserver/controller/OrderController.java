@@ -6,6 +6,7 @@ import com.example.earthcafeserver.service.OrderService;
 import com.example.earthcafeserver.service.PaymentService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +27,7 @@ public class OrderController {
     @Operation(summary = "주문 생성", description = "새로운 주문을 등록합니다.")
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody OrderRequest request) {
-        return ResponseEntity.ok(orderService.insertOrder(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.insertOrder(request));
     }
 
     /**

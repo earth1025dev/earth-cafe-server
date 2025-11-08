@@ -31,6 +31,7 @@ public class Product extends BaseEntity {
     public Product(String name, Long price) {
         this.name = name;
         this.price = price;
+        this.isActive = true;
     }
 
     public void addOption(ProductOption option) {

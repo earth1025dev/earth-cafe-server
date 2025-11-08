@@ -7,6 +7,7 @@ import com.example.earthcafeserver.dto.product.ProductUpdateRequest;
 import com.example.earthcafeserver.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,7 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<?> addProduct(@RequestBody ProductRequest request) {
         ProductSummaryResponse response = productService.insertProduct(request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
@@ -81,8 +82,8 @@ public class ProductController {
     @Operation(summary = "상품 비활성화(판매 중단)", description = "상품을 판매 중단합니다.")
     @PatchMapping("/{productId}/deactivate")
     public ResponseEntity<?> deactivateProduct(@PathVariable Long productId) {
-        ProductSummaryResponse response = productService.deactivateProduct(productId);
-        return ResponseEntity.ok(response);
+        productService.deactivateProduct(productId);
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -93,7 +94,7 @@ public class ProductController {
     @Operation(summary = "상품 활성화(재판매)", description = "상품을 재판매합니다.")
     @PatchMapping("/{productId}/activate")
     public ResponseEntity<?> activateProduct(@PathVariable Long productId) {
-        ProductSummaryResponse response = productService.activeProduct(productId);
-        return ResponseEntity.ok(response);
+        productService.activeProduct(productId);
+        return ResponseEntity.noContent().build();
     }
 }

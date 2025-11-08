@@ -88,6 +88,7 @@ public class PaymentService {
         return PaymentResponse.from(payment, true);
     }
 
+    @Transactional
     public PaymentResponse cancelPayment(PaymentRequest request) {
         Payment payment = paymentRepository.findByOrderId(request.getOrderId()).orElseThrow(() -> new IllegalArgumentException("결제 내역이 없습니다."));
 
