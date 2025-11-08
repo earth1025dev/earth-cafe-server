@@ -56,7 +56,7 @@ class MemberControllerTest {
         mockMvc.perform(post("/api/members")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("홍길동"))
                 .andExpect(jsonPath("$.phone").exists());
     }
@@ -96,7 +96,7 @@ class MemberControllerTest {
         Long id = mapper.readTree(response).get("id").asLong();
 
         mockMvc.perform(post("/api/members/{id}/withdraw", id))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -148,16 +148,16 @@ class MemberControllerTest {
 
         // 2) 탈퇴
         mockMvc.perform(post("/api/members/{id}/withdraw", id))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         // 3) 탈퇴 철회
         mockMvc.perform(post("/api/members/{id}/cancel-withdrawal", id))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         // 4) 다시 조회하여 활성화 상태값 확인
         mockMvc.perform(get("/api/members/{id}", id))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("ACTIVE"));
+                .andExpect(jsonPath("$.memberStatus").value("ACTIVE"));
     }
 
     @Test

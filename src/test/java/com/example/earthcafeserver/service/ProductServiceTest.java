@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class ProductServiceTest {
 
     @Autowired
@@ -65,6 +67,7 @@ class ProductServiceTest {
         assertEquals(8500L, productSummaryResponse.getPrice());
     }
 
+    @Transactional
     @Test
     void deactivateProduct() {
         // given
@@ -72,11 +75,11 @@ class ProductServiceTest {
         ProductSummaryResponse saved = productService.insertProduct(request);
 
         // when
-        ProductSummaryResponse productSummaryResponse = productService.deactivateProduct(saved.getId());
+        productService.deactivateProduct(saved.getId());
 
         // then
-        assertEquals("아메리카노", productSummaryResponse.getName());
-        assertEquals(false, productSummaryResponse.getIsActive());
+        ProductDetailResponse product = productService.getProductById(saved.getId());
+        assertFalse(product.getIsActive());
     }
 
     @Test
@@ -84,14 +87,14 @@ class ProductServiceTest {
         // given
         ProductRequest request = createRequest();
         ProductSummaryResponse saved = productService.insertProduct(request);
-        ProductSummaryResponse response = productService.deactivateProduct(saved.getId());
+        productService.deactivateProduct(saved.getId());
 
         // when
-        ProductSummaryResponse productSummaryResponse = productService.activeProduct(saved.getId());
+        productService.activeProduct(saved.getId());
 
         // then
-        assertEquals("아메리카노", productSummaryResponse.getName());
-        assertEquals(true, productSummaryResponse.getIsActive());
+        ProductDetailResponse product = productService.getProductById(saved.getId());
+        assertTrue(product.getIsActive());
     }
 
     @Test

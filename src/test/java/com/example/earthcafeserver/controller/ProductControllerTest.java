@@ -61,7 +61,7 @@ class ProductControllerTest {
         mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("아메리카노"))
                 .andExpect(jsonPath("$.price").value(4000L));
     }
@@ -105,8 +105,7 @@ class ProductControllerTest {
 
         // 2) 상품 비활성화
         mockMvc.perform(patch("/api/products/{productId}/deactivate", productId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.isActive").value(false));
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -123,11 +122,10 @@ class ProductControllerTest {
 
         // 2) 상품 비활성화
         mockMvc.perform(patch("/api/products/{productId}/deactivate", productId))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         // 3) 상품 재활성화
         mockMvc.perform(patch("/api/products/{productId}/activate", productId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.isActive").value(true));
+                .andExpect(status().isNoContent());
     }
 }
