@@ -20,7 +20,8 @@ public class OrderHistoryResponse {
         return OrderHistoryResponse.builder()
                 .id(orderHistory.getId())
                 .orderId(orderHistory.getOrder().getId())
-                .prevStatus(orderHistory.getPrevStatus().name())
+                .prevStatus(orderHistory.getPrevStatus() == null ? null :
+                        orderHistory.getPrevStatus().name())
                 .newStatus(orderHistory.getNewStatus().name())
                 .changeAt(orderHistory.getChangedAt())
                 .build();

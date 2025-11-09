@@ -50,7 +50,7 @@ public class OrderController {
      */
     @Operation(summary = "회원별 주문 목록 조회", description = "회원 별 주문 목록을 조회합니다.")
     @GetMapping
-    public ResponseEntity<?> getOrders(@PathVariable Long memberId) {
+    public ResponseEntity<?> getOrders(@RequestParam Long memberId) {
         return ResponseEntity.ok(orderService.getOrdersByMember(memberId));
     }
 

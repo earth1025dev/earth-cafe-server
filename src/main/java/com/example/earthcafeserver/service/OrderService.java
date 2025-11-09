@@ -2,6 +2,8 @@ package com.example.earthcafeserver.service;
 
 import com.example.earthcafeserver.domain.member.Member;
 import com.example.earthcafeserver.domain.order.*;
+import com.example.earthcafeserver.domain.payment.Payment;
+import com.example.earthcafeserver.domain.payment.PaymentStatus;
 import com.example.earthcafeserver.domain.product.Product;
 import com.example.earthcafeserver.domain.product.ProductOption;
 import com.example.earthcafeserver.dto.order.*;
@@ -30,6 +32,8 @@ public class OrderService {
     private final ProductRepository productRepository;
 
     private final ProductOptionRepository productOptionRepository;
+
+    private final PaymentRepository paymentRepository;
 
     public OrderResponse insertOrder(OrderRequest orderRequest) {
         // 1) 회원 확인
@@ -95,9 +99,11 @@ public class OrderService {
     @Transactional
     public void cancelOrder(Long orderId, String changedBy) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
+        Payment payment = paymentRepository.findByOrderId(orderId).orElseThrow(() -> new IllegalArgumentException("해당 결제를 찾을 수 없습니다."));
 
-        if (order.getStatus() != OrderStatus.CONFIRMED) {
-            throw new IllegalStateException("주문 취소는 성공한 결제에서만 가능합니다.");
+        if (order.getStatus() != OrderStatus.CONFIRMED
+                || payment.getPaymentStatus() != PaymentStatus.CANCELED) {
+            throw new IllegalStateException("주문 취소는 결제 취소된 상태에서만 가능합니다.");
         }
 
         orderHistoryRepository.save(
