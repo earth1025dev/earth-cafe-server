@@ -5,10 +5,14 @@ import com.example.earthcafeserver.domain.member.Member;
 import com.example.earthcafeserver.domain.member.Role;
 import com.example.earthcafeserver.domain.order.Order;
 import com.example.earthcafeserver.domain.order.OrderItem;
+import com.example.earthcafeserver.domain.order.OrderStatus;
 import com.example.earthcafeserver.domain.payment.Payment;
 import com.example.earthcafeserver.domain.payment.PaymentStatus;
 import com.example.earthcafeserver.domain.product.Product;
 import com.example.earthcafeserver.domain.product.ProductOption;
+import com.example.earthcafeserver.dto.order.OrderItemRequest;
+import com.example.earthcafeserver.dto.order.OrderRequest;
+import com.example.earthcafeserver.dto.order.OrderResponse;
 import com.example.earthcafeserver.dto.payment.PaymentRequest;
 import com.example.earthcafeserver.dto.payment.PaymentResponse;
 import com.example.earthcafeserver.repository.MemberRepository;
@@ -22,6 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,6 +37,9 @@ class PaymentServiceTest {
 
     @Autowired
     private PaymentService paymentService;
+
+    @Autowired
+    private OrderService orderService;
 
     @Autowired
     private OrderRepository orderRepository;
@@ -202,5 +210,49 @@ class PaymentServiceTest {
 
         // when
         assertThrows(IllegalStateException.class, () -> paymentService.cancelPayment(request2));
+    }
+
+    @Test
+    void cancelOrder_success() {
+        // given
+        Member member = memberRepository.save(createMember());
+        Product product = productRepository.save(createProduct());
+
+        OrderItemRequest item = new OrderItemRequest();
+        item.setProductId(product.getId());
+        item.setQuantity(2);
+        item.setOptions(List.of(1L));
+
+        OrderRequest request = new OrderRequest();
+        request.setMemberId(member.getId());
+        request.setOrderItems(List.of(item));
+
+        OrderResponse response = orderService.insertOrder(request);
+
+        Order order = orderRepository.findById(response.getOrderId()).orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
+        order.changeStatus(OrderStatus.CONFIRMED);
+
+        PaymentRequest request1 = new PaymentRequest();
+        request1.setOrderId(order.getId());
+        request1.setAmount(order.getTotalAmount());
+        request1.setIdempotencyKey("pay-123");
+
+        PaymentResponse response1 = paymentService.requestPayment(request1);
+
+        Payment payment = paymentRepository.findByOrderId(order.getId()).orElseThrow();
+        payment.setPaymentStatus(PaymentStatus.SUCCESS);
+
+        PaymentRequest request2 = new PaymentRequest();
+        request2.setOrderId(order.getId());
+        request2.setAmount(order.getTotalAmount());
+        request2.setIdempotencyKey("pay-124");
+
+        PaymentResponse response2 = paymentService.cancelPayment(request2);
+        // when
+        orderService.cancelOrder(response2.getOrderId(), "SYSTEM");
+
+        //then
+        OrderResponse orderById = orderService.getOrderById(response.getOrderId());
+        assertEquals("CANCELED", orderById.getOrderStatus());
     }
 }

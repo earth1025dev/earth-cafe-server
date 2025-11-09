@@ -3,8 +3,6 @@ package com.example.earthcafeserver.service;
 import com.example.earthcafeserver.domain.member.Gender;
 import com.example.earthcafeserver.domain.member.Member;
 import com.example.earthcafeserver.domain.member.Role;
-import com.example.earthcafeserver.domain.order.Order;
-import com.example.earthcafeserver.domain.order.OrderStatus;
 import com.example.earthcafeserver.domain.product.Product;
 import com.example.earthcafeserver.domain.product.ProductOption;
 import com.example.earthcafeserver.dto.order.OrderItemRequest;
@@ -13,6 +11,7 @@ import com.example.earthcafeserver.dto.order.OrderResponse;
 import com.example.earthcafeserver.dto.order.OrderSummaryResponse;
 import com.example.earthcafeserver.repository.MemberRepository;
 import com.example.earthcafeserver.repository.OrderRepository;
+import com.example.earthcafeserver.repository.PaymentRepository;
 import com.example.earthcafeserver.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -41,6 +40,9 @@ class OrderServiceTest {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     private Member createMember() {
         return new Member("홍길동", "010-1234-5678", Gender.MALE, Role.BASIC_USER, LocalDate.of(1990, 1, 1));
@@ -105,34 +107,6 @@ class OrderServiceTest {
     }
 
     @Test
-    void cancelOrder_success() {
-        // given
-        Member member = memberRepository.save(createMember());
-        Product product = productRepository.save(createProduct());
-
-        OrderItemRequest item = new OrderItemRequest();
-        item.setProductId(product.getId());
-        item.setQuantity(2);
-        item.setOptions(List.of(1L));
-
-        OrderRequest request = new OrderRequest();
-        request.setMemberId(member.getId());
-        request.setOrderItems(List.of(item));
-
-        OrderResponse response = orderService.insertOrder(request);
-
-        Order order = orderRepository.findById(response.getOrderId()).orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없습니다."));
-        order.changeStatus(OrderStatus.CONFIRMED);
-
-        // when
-        orderService.cancelOrder(response.getOrderId(), "SYSTEM");
-
-        //then
-        OrderResponse orderById = orderService.getOrderById(response.getOrderId());
-        assertEquals("CANCELED", orderById.getOrderStatus());
-    }
-
-    @Test
     void cancelOrder_fail() {
         // given
         Member member = memberRepository.save(createMember());
@@ -150,7 +124,7 @@ class OrderServiceTest {
         OrderResponse response = orderService.insertOrder(request);
 
         // then
-        assertThrows(IllegalStateException.class, () ->
+        assertThrows(IllegalArgumentException.class, () ->
                 orderService.cancelOrder(response.getOrderId(), "SYSTEM"));
     }
 

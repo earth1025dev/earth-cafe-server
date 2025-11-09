@@ -174,8 +174,7 @@ class OrderControllerTest {
 
         // 5) 주문 취소 호출
         mockMvc.perform(patch("/api/orders/" + orderId + "/cancel"))
-                .andExpect(status().isNoContent())
-                .andDo(print());
+                .andExpect(status().isBadRequest()); //결제 취소 전이기 때문에 400
     }
 
     @Test
