@@ -1,14 +1,22 @@
 # ☕🌍EarthCafeServer
 
 카페 모바일 주문 백엔드 서버 과제  
-Spring Boot + JPA + H2 기반의 REST API 구현
-
+- Spring Boot 3.5, JPA, H2, Java 17, Swagger
+- 회원관리, 상품관리, 주문, 결제
 ---
-## 🧾 API 명세서 (EarthCafeServer)
+
+## 🚀 실행 방법
+
+1. JAR 파일 다운로드 (또는 clone 후 직접 실행)
+2. 아래 명령어 실행
+> java -jar build/libs/earth-cafe-server-0.0.1-SNAPSHOT.jar
+
+
+## 🧾 API 명세서
 
 > ☕ **모바일 카페 주문 백엔드 API**
 >
-> 회원 등록 → 상품 조회 → 주문 생성 → 결제 요청 → 주문 취소까지 전체 흐름을 다룹니다.  
+> 회원 등록 → 상품 조회 → 주문 생성 → 결제 요청 → 결제 취소 → 주문 취소까지 전체 흐름을 다룹니다.  
 > 모든 응답은 `application/json` 형식을 따릅니다.
 
 ---
@@ -20,21 +28,21 @@ Spring Boot + JPA + H2 기반의 REST API 구현
 | `POST` | `/api/members` | 회원 등록 | `{ "name": "홍길동", "phone": "010-1234-5678", "gender": "MALE", "role": "BASIC_USER", "birthDate": "1995-02-15" }` | `201 Created` + 회원 정보 |
 | `PUT` | `/api/members/{id}` | 회원 수정 | `{ "name": "김철수", "phone": "010-9999-8888" }`                                                                    | 수정된 회원 정보 |
 | `GET` | `/api/members/{id}` | 회원 단건 조회 | -                                                                                                                | 회원 정보 |
-| `POST` | `/api/members/{id}` | 회원 탈퇴 | -                                                                                                                | `204 No Content` |
-| `POST` | `/api/members/{id}/cancel-withdrawal` | 회원 탈퇴 철회 | -                                                                                                                | `204 No Content` |
+| `POST` | `/api/members/{id}/withdraw` | 회원 탈퇴 | `{ "id": 1 }`                                                                                                    | `204 No Content` |
+| `POST` | `/api/members/{id}/cancel-withdrawal` | 회원 탈퇴 철회 | `{ "id": 1 }`                                                                                                                  | `204 No Content` |
 
 ---
 
 ### ☕ Product API
 
-| Method | Endpoint | Description | Request Body | Response |
-|--------|-----------|--------------|---------------|-----------|
-| `POST` | `/api/products` | 상품 등록 | `{ "name": "아메리카노", "price": 4000, "isActive": true, "options": [ {"name": "ICE", "extraPrice": 0}, {"name": "HOT", "extraPrice": 0} ] }` | `201 Created` + 상품 요약 정보 |
-| `GET` | `/api/products` | 활성화된 상품 목록 조회 | - | `[ { "id": 1, "name": "아메리카노", "price": 4000 } ]` |
-| `GET` | `/api/products/{productId}` | 상품 단건 조회 | - | 상품 상세 정보 |
-| `PUT` | `/api/products/{productId}` | 상품 수정 | `{ "name": "카페라떼", "price": 4800 }` | 수정된 상품 요약 정보 |
-| `PATCH` | `/api/products/{productId}/deactivate` | 상품 판매 중단 | - | `204 No Content` |
-| `PATCH` | `/api/products/{productId}/activate` | 상품 재판매 시작 | - | `204 No Content` |
+| Method | Endpoint | Description | Request Body | Response                                            |
+|--------|-----------|--------------|---------------|-----------------------------------------------------|
+| `POST` | `/api/products` | 상품 등록 | `{ "name": "아메리카노", "price": 4000, "isActive": true, "options": [ {"name": "ICE", "extraPrice": 0}, {"name": "HOT", "extraPrice": 0} ] }` | `201 Created` + 상품 요약 정보                            |
+| `GET` | `/api/products` | 활성화된 상품 목록 조회 | - | `[ { "id": 1, "name": "아메리카노", "price": 4000, "isActive": true } ]` |
+| `GET` | `/api/products/{productId}` | 상품 단건 조회 | - | 상품 상세 정보                                            |
+| `PUT` | `/api/products/{productId}` | 상품 수정 | `{ "name": "카페라떼", "price": 4800 }` | 수정된 상품 요약 정보                                        |
+| `PATCH` | `/api/products/{productId}/deactivate` | 상품 판매 중단 | - | `204 No Content`                                    |
+| `PATCH` | `/api/products/{productId}/activate` | 상품 재판매 시작 | - | `204 No Content`                                    |
 
 ---
 
@@ -43,14 +51,14 @@ Spring Boot + JPA + H2 기반의 REST API 구현
 
 | Method | Endpoint | Description | Request Body | Response |
 |--------|-----------|--------------|---------------|-----------|
-| `POST` | `/api/orders` | 주문 생성 | `{ "memberId": 1, "orders": [ { "productId": 1, "quantity": 2, "options": [1, 3] } ] }` | 주문 요약 정보 |
+| `POST` | `/api/orders` | 주문 생성 | `{ "memberId": 1, "orderItems": [ { "productId": 1, "quantity": 2, "options": [1, 3] } ] }` | 주문 요약 정보 |
 | `GET` | `/api/orders/{orderId}` | 주문 단건 조회 | - | 주문 상세 정보 (주문 항목, 상태 포함) |
 | `GET` | `/api/orders?memberId={memberId}` | 회원별 주문 목록 조회 | - | 주문 목록 |
 | `PATCH` | `/api/orders/{orderId}/cancel` | 주문 취소 | - | `204 No Content` |
 | `GET` | `/api/orders/{orderId}/history` | 주문 이력 조회 | - | 주문 상태 변경 이력 |
 | `GET` | `/api/orders/{orderId}/items` | 주문 항목 조회 | - | 주문에 포함된 상품 목록 |
-| `POST` | `/api/orders/{orderId}/payments` | 결제 요청 | `{ "idempotencyKey": "uuid-12345" }` | `{ "paymentId": 1, "status": "SUCCESS", "elapsedMs": 540 }` |
-| `PATCH` | `/api/orders/{orderId}/payments/cancel` | 결제 취소 | `{ "idempotencyKey": "uuid-12345" }` | `{ "paymentId": 1, "status": "SUCCESS", "elapsedMs": 540 } |
+| `POST` | `/api/orders/{orderId}/payments` | 결제 요청 | `{ "orderId": 1,"amount": 17000,"idempotencyKey": "uuid-12345" }` | `{"success":true,"orderStatus":"SUCCESS","failCode":null,"failMessage":null,"paymentId":1,"orderId":1,"idempotentCheck":true,"elapsedMillis":0}` |
+| `PATCH` | `/api/orders/{orderId}/payments/cancel` | 결제 취소 | `{ "orderId": 1,"amount": 17000,"idempotencyKey": "uuid-12345" }` | `{"success":true,"orderStatus":"SUCCESS","failCode":null,"failMessage":null,"paymentId":1,"orderId":1,"idempotentCheck":true,"elapsedMillis":0}` |
 | `GET` | `/api/orders/{orderId}/payments` | 주문별 결제 내역 조회 | - | 결제 내역 목록 |
 | `GET` | `/api/orders/{orderId}/payments/{paymentId}` | 결제 단건 조회 | - | 결제 상세 정보 (상태, 실패 사유 포함) |
 
@@ -71,7 +79,7 @@ Spring Boot + JPA + H2 기반의 REST API 구현
 
 ### 📚 예시 흐름
 
-1. **회원 등록**  
+1. **회원 가입**  
    → `POST /api/members`
 2. **상품 등록**  
    → `POST /api/products`
@@ -82,8 +90,10 @@ Spring Boot + JPA + H2 기반의 REST API 구현
 5. **상품 판매 중단 / 재판매**  
    → `PATCH /api/products/{productId}/deactivate`  
    → `PATCH /api/products/{productId}/activate`
-6. **주문 취소 (테스트용)**  
-   → `DELETE /api/orders/{orderId}/cancel`
+6. **결제 취소**  
+   → `PATCH /api/orders/{orderId}/payments/cancel`
+7. **주문 취소**  
+   → `PATCH /api/orders/{orderId}/cancel`
 
 ---
 
@@ -91,6 +101,14 @@ Spring Boot + JPA + H2 기반의 REST API 구현
 > - Swagger UI: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 > - API 문서는 OpenAPI 3.0 기준으로 자동 생성됩니다.
 
+## 📜 테스트 결과
+![img.png](src/main/resources/image/img.png)
+![img_1.png](src/main/resources/image/img_1.png)
+![img_2.png](src/main/resources/image/img_2.png)
+![img_3.png](src/main/resources/image/img_3.png)
+![img_4.png](src/main/resources/image/img_4.png)
+![img_5.png](src/main/resources/image/img_5.png)
+![img_6.png](src/main/resources/image/img_6.png)
 ## 📊 ERD (Entity Relationship Diagram)
 
 ```mermaid
